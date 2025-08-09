@@ -1,1 +1,7 @@
-/wordpress
+# wordpress 以下全部無視
+/wordpress/
+
+# ただしこのファイルだけ許可（途中のディレクトリも明示的に許可）
+!/wordpress/wp-content/
+!/wordpress/wp-content/mu-plugins/
+!/wordpress/wp-content/mu-plugins/send-test-mail.php
