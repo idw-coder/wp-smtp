@@ -1,0 +1,53 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    volumes:
+      - db_data:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:latest
+    depends_on:
+      - db
+    ports:
+      - "0.0.0.0:10000:80"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DEBUG: 1 # wp-config.phpにWP_DEBUGの設定が自動的に適用
+    volumes:
+      # ローカルのwordpressディレクトリをコンテナにマウント
+      - ./wordpress:/var/www/html
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    depends_on:
+      - db
+    ports:
+      - "0.0.0.0:10001:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: wordpress
+      PMA_PASSWORD: wordpress
+    restart: always
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      # SMTP サーバー
+      - "0.0.0.0:1025:1025"
+      # Web UI（メール確認用）
+      - "0.0.0.0:8025:8025"
+    restart: always
+
+volumes:
+  db_data:
